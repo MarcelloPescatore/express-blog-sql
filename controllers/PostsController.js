@@ -1,5 +1,6 @@
 const posts = require('../db/db.js')
 const fs = require('fs')
+const connection = require('../db/connection')
 
 // index: ritornerà un html con una ul che stamperà la lista dei post
 // const index = (req, res) => {
@@ -25,11 +26,24 @@ const fs = require('fs')
 //  la rotta index creata ieri (commentala via) e ricreala restituendo un JSON con la lista dei posts invece di un ul.
 
 const index = (req, res) => {
+    // prepare a sql query to get all posts from the db
+    const sql = 'SELECT * FROM posts'
+    // execute the query
+    connection.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err });
 
-     res.status(202).json({
+        const responseData = {
+            data: results,
+            counter: results.length
+        }
+
+        res.status(200).json(responseData);
+    })
+
+    /*  res.status(202).json({
          data: posts,
          counter: posts.length
-     })
+     }) */
 }
 
 // show: tramite il parametro dinamico che rappresenta lo slug del post, ritornerà un json con i dati del post
