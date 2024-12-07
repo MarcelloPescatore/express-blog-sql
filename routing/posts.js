@@ -12,8 +12,8 @@ router.post('/store', PostsController.store);
 // Modifico un post
 router.put('/:title', PostsController.update); 
 // rotta di show
-router.get('/:slug', PostsController.show);
+router.get('/:id', PostsController.show);
 // rotta delete
-router.delete('/:title', PostsController.destroy)
+router.delete('/:id', PostsController.destroy)
 
 module.exports = router;

@@ -48,6 +48,7 @@ const index = (req, res) => {
 
 // show: tramite il parametro dinamico che rappresenta lo slug del post, ritornerà un json con i dati del post
 const show = (req, res) => {
+
     const post = posts.find(post => post.slug.toLowerCase() === req.params.slug.toLowerCase());
     if (!post) {
         return res.status(404).json({
@@ -103,7 +104,6 @@ const store = (req, res) => {
 }
 
 // Update post
-
 const update = (req, res) => {
     // prima devo trovare il post da modificare, attraverso il titolo
     const { title } = req.params;
@@ -142,7 +142,28 @@ const update = (req, res) => {
 
 // delete post
 const destroy = (req, res) => {
-    // trova il post dal titolo
+
+    console.log(req.params);
+
+
+    //1. take the resource id from the request
+    const id = req.params.id
+
+    //2. prepare the sql query to delete the record form the db
+    const sql = 'DELETE FROM posts WHERE id=?'
+
+    //3. perform the prepared statement query
+    connection.query(sql, [id], (err, results) => {
+        console.log(err, results);
+        if (err) return res.status(500).json({ error: err })
+        //4. handle a 404 error if the record is not found
+        if (results.affectedRows === 0) return res.status(404).json({ error: `404! No posts found with the this id: ${id}` })
+
+        return res.json({ status: 204, affectedRows: results.affectedRows })
+
+    })
+
+    /* // trova il post dal titolo
     const post = posts.find(post => post.title.toLowerCase() === req.params.title.toLowerCase())
 
     // controlliamo se il post è presente
@@ -161,7 +182,7 @@ const destroy = (req, res) => {
         status: 200,
         data: newPosts,
         counter: newPosts.length
-    })
+    }) */
 }
 
 module.exports = {
